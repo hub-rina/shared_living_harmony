@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+.logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Test
+coverage/
+
+# Prisma
+apps/api/prisma/migrations/dev.db*
+apps/api/prisma/seed.js
+apps/api/prisma/seed.d.ts
+
+# Local image uploads (STORAGE_DRIVER=local)
+apps/api/uploads/
+
+# Tesseract OCR language cache (downloaded at runtime)
+*.traineddata
+*.traineddata.gz

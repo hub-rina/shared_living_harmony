@@ -1,0 +1,62 @@
+{
+  "name": "@homebuddy/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "prisma generate && nest build",
+    "dev": "prisma generate && nest start --watch",
+    "start": "node dist/main.js",
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:reset": "prisma migrate reset --force"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1063.0",
+    "@homebuddy/shared": "workspace:*",
+    "@nestjs/common": "11.0.5",
+    "@nestjs/config": "4.0.0",
+    "@nestjs/core": "11.0.5",
+    "@nestjs/jwt": "11.0.0",
+    "@nestjs/passport": "11.0.5",
+    "@nestjs/platform-express": "11.0.5",
+    "@nestjs/schedule": "4.1.2",
+    "@prisma/client": "6.2.1",
+    "bcryptjs": "2.4.3",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.1",
+    "helmet": "8.0.0",
+    "passport": "0.7.0",
+    "passport-jwt": "4.0.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.1",
+    "tesseract.js": "^7.0.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@homebuddy/tsconfig": "workspace:*",
+    "@nestjs/cli": "11.0.0",
+    "@nestjs/schematics": "11.0.0",
+    "@nestjs/testing": "11.0.5",
+    "@types/bcryptjs": "2.4.6",
+    "@types/express": "5.0.0",
+    "@types/jest": "29.5.14",
+    "@types/node": "22.10.7",
+    "@types/passport-jwt": "4.0.1",
+    "@types/supertest": "6.0.2",
+    "eslint": "9.18.0",
+    "jest": "29.7.0",
+    "prisma": "6.2.1",
+    "supertest": "7.0.0",
+    "ts-jest": "29.2.5",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}

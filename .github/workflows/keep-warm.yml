@@ -1,0 +1,46 @@
+name: keep-warm
+
+# Pings the deployed services on a schedule so Railway does not put them to
+# sleep. A cold container takes 10-30s to wake, which shows up as a slow first
+# login. Keeping the API (and optionally the web app) warm removes that lag.
+#
+# Setup: define repository variables (Settings -> Secrets and variables ->
+# Actions -> Variables):
+#   API_HEALTH_URL  (required)  e.g. https://<api-domain>/api/health
+#   WEB_URL         (optional)  e.g. https://web-production-96525.up.railway.app
+#
+# GitHub disables scheduled workflows after 60 days with no repo activity, and
+# cron runs can be delayed a few minutes under load. Both are fine here.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping services
+        env:
+          API_HEALTH_URL: ${{ vars.API_HEALTH_URL }}
+          WEB_URL: ${{ vars.WEB_URL }}
+        run: |
+          if [ -z "$API_HEALTH_URL" ] && [ -z "$WEB_URL" ]; then
+            echo "No targets set. Define repo variable API_HEALTH_URL (and optionally WEB_URL) to enable keep-warm."
+            exit 0
+          fi
+
+          ping() {
+            local url="$1"
+            [ -z "$url" ] && return 0
+            local code
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' --max-time 45 --retry 2 --retry-delay 5 "$url" || echo "000")
+            echo "$url -> $code"
+            if [ "$code" = "000" ]; then
+              echo "::warning::No response from $url (it may have been asleep; next run should be warm)"
+            fi
+          }
+
+          ping "$API_HEALTH_URL"
+          ping "$WEB_URL"

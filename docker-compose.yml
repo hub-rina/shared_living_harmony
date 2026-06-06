@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: homebuddy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: homebuddy
+      POSTGRES_PASSWORD: homebuddy
+      POSTGRES_DB: homebuddy
+    ports:
+      - "5433:5432"
+    volumes:
+      - homebuddy-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homebuddy -d homebuddy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  homebuddy-db:
