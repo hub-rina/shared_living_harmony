@@ -24,7 +24,11 @@ export class OcrService implements OnModuleDestroy {
 
   private worker(): Promise<Worker> {
     if (!this.workerPromise) {
-      this.workerPromise = createWorker('eng');
+      // Tesseract downloads its core + language data and caches them on disk.
+      // Default cache is the working directory, which the non-root prod user
+      // cannot write — point it at a writable path instead.
+      const cachePath = process.env.OCR_CACHE_DIR ?? '/tmp';
+      this.workerPromise = createWorker('eng', 1, { cachePath });
     }
     return this.workerPromise;
   }

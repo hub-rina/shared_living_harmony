@@ -9,6 +9,7 @@ import {
 } from '@homebuddy/shared';
 import { useRef } from 'react';
 import { Button, Card, InlineConfirm, Tag } from '@/components/ui';
+import { mediaUrl } from '@/lib/api';
 import { fileToResizedDataUrl } from '@/lib/photo';
 import { useInFlight } from '@/lib/use-in-flight';
 
@@ -58,7 +59,7 @@ function ShareRow({
 
       {share.proofUrl && (
         <a
-          href={share.proofUrl}
+          href={mediaUrl(share.proofUrl)}
           target="_blank"
           rel="noreferrer"
           className="text-[var(--text-soft)] transition-colors hover:text-[var(--accent-hover)]"
@@ -138,7 +139,7 @@ export function BillCard({
           <span className="block text-base font-bold tabular-nums">{formatEuros(expense.totalCents)}</span>
           {expense.receiptUrl && (
             <a
-              href={expense.receiptUrl}
+              href={mediaUrl(expense.receiptUrl)}
               target="_blank"
               rel="noreferrer"
               className="text-xs text-[var(--text-soft)] underline-offset-2 hover:underline"

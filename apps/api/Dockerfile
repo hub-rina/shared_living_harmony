@@ -46,6 +46,12 @@ COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /repo/packages/shared/node_modules ./packages/shared/node_modules
 
+# Writable image storage + OCR cache for the non-root runtime user. Ephemeral
+# across deploys — set STORAGE_DRIVER=s3 for durable storage in production.
+RUN mkdir -p /repo/apps/api/uploads && chown -R nestjs:nodejs /repo/apps/api/uploads
+ENV UPLOADS_DIR=/repo/apps/api/uploads
+ENV OCR_CACHE_DIR=/tmp
+
 USER nestjs
 
 ENV PORT=8080

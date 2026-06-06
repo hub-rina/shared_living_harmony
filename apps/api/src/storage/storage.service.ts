@@ -28,17 +28,13 @@ export class StorageService {
   private readonly logger = new Logger(StorageService.name);
   private readonly driver: 'local' | 's3';
   private readonly uploadsDir: string;
-  private readonly publicBaseUrl: string;
   private s3?: S3Client;
 
   constructor(private readonly config: ConfigService) {
     this.driver = this.config.get<string>('STORAGE_DRIVER') === 's3' ? 's3' : 'local';
-    this.uploadsDir = join(process.cwd(), 'uploads');
-    this.publicBaseUrl = (
-      this.config.get<string>('API_PUBLIC_URL') ??
-      this.config.get<string>('API_URL') ??
-      'http://localhost:4000'
-    ).replace(/\/$/, '');
+    // UPLOADS_DIR lets prod point at a writable path (the container runs as a
+    // non-root user that cannot write the app's working directory).
+    this.uploadsDir = this.config.get<string>('UPLOADS_DIR') ?? join(process.cwd(), 'uploads');
   }
 
   decodeDataUrl(dataUrl: string): DecodedImage {
@@ -55,11 +51,13 @@ export class StorageService {
     return this.driver === 's3' ? this.storeS3(key, image) : this.storeLocal(key, image);
   }
 
+  // Returns a relative path; each client prefixes it with its own API base URL
+  // (web, and later mobile), so no absolute-host env var is needed.
   private async storeLocal(key: string, image: DecodedImage): Promise<string> {
     const target = join(this.uploadsDir, key);
     await mkdir(join(target, '..'), { recursive: true });
     await writeFile(target, image.buffer);
-    return `${this.publicBaseUrl}/api/uploads/${key}`;
+    return `/api/uploads/${key}`;
   }
 
   private async storeS3(key: string, image: DecodedImage): Promise<string> {

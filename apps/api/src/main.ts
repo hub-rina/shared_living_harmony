@@ -33,7 +33,9 @@ async function bootstrap() {
     credentials: true,
   });
   // Locally stored uploads (STORAGE_DRIVER=local) are served read-only here.
-  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/api/uploads' });
+  // Must match StorageService's UPLOADS_DIR.
+  const uploadsDir = config.get<string>('UPLOADS_DIR') ?? join(process.cwd(), 'uploads');
+  app.useStaticAssets(uploadsDir, { prefix: '/api/uploads' });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({

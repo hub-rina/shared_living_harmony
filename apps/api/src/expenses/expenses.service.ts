@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -63,6 +64,8 @@ function toResponse(row: ExpenseRow): Expense {
 
 @Injectable()
 export class ExpensesService {
+  private readonly logger = new Logger(ExpensesService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: StorageService,
@@ -72,12 +75,26 @@ export class ExpensesService {
   async scan(scope: HouseholdScope, imageDataUrl: string): Promise<ReceiptDraft> {
     if (!expensePolicy.canCreate(scope)) throw new ForbiddenException();
     const image = this.storage.decodeDataUrl(imageDataUrl);
+    // Storing the receipt and reading it are both best-effort: a failure here
+    // must still return an editable draft (manual entry), never a 500.
     const [receiptUrl, text] = await Promise.all([
-      this.storage.store(image, `receipts/${scope.householdId}`),
+      this.tryStore(image, `receipts/${scope.householdId}`),
       this.ocr.read(image.buffer),
     ]);
     const { items, totalCents } = parseReceiptText(text);
     return { items, totalCents, receiptUrl };
+  }
+
+  private async tryStore(
+    image: Parameters<StorageService['store']>[0],
+    prefix: string,
+  ): Promise<string | null> {
+    try {
+      return await this.storage.store(image, prefix);
+    } catch (error) {
+      this.logger.warn(`Image storage failed, continuing without it: ${String(error)}`);
+      return null;
+    }
   }
 
   async list(scope: HouseholdScope): Promise<ExpenseListResponse> {
@@ -211,12 +228,17 @@ export class ExpensesService {
       throw new BadRequestException('This share is already settled');
     }
 
-    const proofUrl = proofImageDataUrl
-      ? await this.storage.store(
+    let proofUrl: string | undefined;
+    if (proofImageDataUrl) {
+      try {
+        proofUrl = await this.storage.store(
           this.storage.decodeDataUrl(proofImageDataUrl),
           `proofs/${scope.householdId}`,
-        )
-      : undefined;
+        );
+      } catch (error) {
+        this.logger.warn(`Proof image failed, marking paid without it: ${String(error)}`);
+      }
+    }
 
     await this.prisma.expenseShare.update({
       where: { id: shareId },

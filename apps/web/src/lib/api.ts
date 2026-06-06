@@ -34,6 +34,13 @@ import { authStore } from './auth-store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
+// Stored images come back as relative paths (local driver) or absolute URLs
+// (S3 driver). Resolve relative ones against this client's API base.
+export function mediaUrl(path: string | null | undefined): string | undefined {
+  if (!path) return undefined;
+  return path.startsWith('http') ? path : `${API_URL}${path}`;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
