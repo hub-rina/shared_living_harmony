@@ -3,7 +3,7 @@
 > A calm coordination app for shared homes. It replaces the unspoken score-keeping of a flat-share — who cleaned last, who's slacking, who always buys the toilet paper — with one visible, blame-free system.
 
 **Bachelor thesis project (Bachelorproef 2026) by [Ecaterina Moraru](mailto:) — Karel de Grote Hogeschool (KDG), Antwerpen.**
-3rd-year Applied Computer Science. Defence: **9 June 2026**.
+3rd-year Multimedia and Creative Technologies. Defence: **9 June 2026**.
 
 **Live demo:** https://web-production-96525.up.railway.app
 
