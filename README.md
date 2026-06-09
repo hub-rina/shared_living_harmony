@@ -398,7 +398,7 @@ Further reading:
 
 ## 14. Author & credits
 
-**HOOMA — Shared Living Harmony** is the bachelor thesis of **Ecaterina Moraru** (Katia), Applied Computer Science, Karel de Grote Hogeschool (KDG), Antwerpen — 2026.
+**HOOMA — Shared Living Harmony** is the bachelor thesis of **Ecaterina Moraru** (Katia), Multimedia and Creative Technologies, Karel de Grote Hogeschool (KDG), Antwerpen — 2026.
 
 The thesis document (`EcaterinaMoraru_SharedLivingHarmony_BP2026`) accompanies this repository. The project is graded and defended as a bachelorproef; the codebase is written to be defensible — clean architecture, no shortcuts, research-grounded product decisions.
 
